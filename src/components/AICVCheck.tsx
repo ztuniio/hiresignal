@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Sparkles, RefreshCw, CheckCircle, AlertTriangle, ArrowRight, CornerDownRight, Zap } from "lucide-react";
+import { Sparkles, RefreshCw, CheckCircle, AlertTriangle, ArrowRight, Gauge, Lock } from "lucide-react";
 import { CVCheckResult } from "../types";
 import { motion, AnimatePresence } from "motion/react";
+import { Reveal, SectionHeading, btnPrimary } from "./ui";
 
 const SAMPLE_CV = `Muhammad Ali
 Pakistan | +92 300 1234567 | ali.dev@email.com | linkedin.com/in/ali-dev
@@ -44,11 +45,11 @@ export default function AICVCheck() {
   const [result, setResult] = useState<CVCheckResult | null>(null);
 
   const loadingMessages = [
-    "Uploading CV segments into Google Gemini model...",
-    "Scanning content layout against global ATS parsing standards...",
-    "Analyzing keyword alignment and target role density...",
-    "Drafting custom regional strengths and tailored action items...",
-    "Synthesizing high-fidelity final scorecard..."
+    "Reading your CV...",
+    "Checking layout against common ATS parsers...",
+    "Matching keywords to the target role...",
+    "Identifying strengths and quick wins...",
+    "Preparing your score report..."
   ];
 
   const handleSampleClick = () => {
@@ -109,351 +110,267 @@ export default function AICVCheck() {
     }
   };
 
-  // Determine color coding & labels for gauge
-  const getScoreInfo = (score: number) => {
-    if (score >= 80) {
+  const scoreInfo = (score: number) => {
+    if (score >= 80)
       return {
-        color: "text-[#39FF14]",
-        stroke: "#39FF14",
-        bg: "bg-[#39FF14]/10",
-        border: "border-[#39FF14]/30",
-        badge: "Strong ATS Score",
-        desc: "Excellent alignment. Your CV matches major ATS templates and contains a strong keyword ratio.",
-        labelClass: "text-[#39FF14]"
+        stroke: "#059669",
+        chip: "bg-emerald-50 text-emerald-800 ring-emerald-200",
+        label: "Strong match",
+        desc: "Your CV is well structured for ATS software and covers most of the keywords recruiters look for.",
       };
-    } else if (score >= 60) {
+    if (score >= 60)
       return {
-        color: "text-amber-400",
-        stroke: "#fbbf24",
-        bg: "bg-amber-400/10",
-        border: "border-amber-400/30",
-        badge: "Average Match",
-        desc: "Moderate alignment. Your resume needs additional keyword integration and formatting adjustments.",
-        labelClass: "text-amber-400"
+        stroke: "#d97706",
+        chip: "bg-amber-50 text-amber-800 ring-amber-200",
+        label: "Needs work",
+        desc: "Your CV is readable by ATS software but is missing keywords and impact that would move it up the shortlist.",
       };
-    } else {
-      return {
-        color: "text-[#B57EDC]",
-        stroke: "#B57EDC",
-        bg: "bg-[#B57EDC]/10",
-        border: "border-[#B57EDC]/30",
-        badge: "Action Required",
-        desc: "Significant mismatch. Automated tracking systems are highly likely to filter your application out due to low keyword density or structural compatibility.",
-        labelClass: "text-[#B57EDC]"
-      };
-    }
+    return {
+      stroke: "#e11d48",
+      chip: "bg-rose-50 text-rose-800 ring-rose-200",
+      label: "At risk of rejection",
+      desc: "Applicant tracking systems are likely to filter this CV out. Structure and keyword coverage need attention.",
+    };
   };
 
-  // SVG Gauge Calculations
-  const radius = 50;
-  const strokeWidth = 10;
-  const circumference = 2 * Math.PI * radius;
+  const r = 52;
+  const circumference = 2 * Math.PI * r;
+  const textareaClass =
+    "w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-[15px] leading-relaxed text-ink placeholder:text-slate-400 transition focus:border-brand focus:outline-none focus:ring-4 focus:ring-emerald-100";
 
   return (
-    <section id="ai-check" className="py-20 md:py-28 bg-[#0A0A0A] border-b border-[#1A1A1A] relative">
-      {/* Decorative Blur Ambient */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full bg-[#39FF14]/3 blur-[120px] pointer-events-none"></div>
+    <section id="ai-check" className="relative overflow-hidden bg-ink py-24 md:py-32">
+      <div className="grid-fade pointer-events-none absolute inset-0" aria-hidden="true" />
+      <div
+        className="pointer-events-none absolute left-1/2 top-0 h-[480px] w-[720px] -translate-x-1/2 rounded-full bg-emerald-500/15 blur-[140px]"
+        aria-hidden="true"
+      />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        {/* Section Heading */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#111111] border border-[#222] text-[#39FF14] text-xs font-mono uppercase tracking-widest mb-4">
-            <Zap className="w-3.5 h-3.5 animate-pulse" /> Advanced Parser Engine
-          </div>
-          <h2 className="font-sans font-bold text-3xl sm:text-5xl text-white tracking-tight">
-            Free AI <span className="text-[#39FF14]">CV Score Scanner</span>
-          </h2>
-          <p className="font-sans text-[#999999] mt-4 leading-relaxed">
-            Test how robust your current resume stands against state-of-the-art ATS engines. Paste your resume, optionally add a target job description, and get instant regional optimization analysis.
-          </p>
-        </div>
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          dark
+          eyebrow="Free AI CV check"
+          title="How does your CV score with an ATS?"
+          description={
+            <>
+              Paste your CV and, optionally, a job description. You will get an instant score with strengths, fixes and
+              missing keywords. Powered by Google Gemini, free, no sign-up.
+            </>
+          }
+        />
 
-        {/* Powered by Google Gemini Line */}
-        <div className="flex justify-center -mt-8 mb-12">
-          <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-gray-400 bg-black px-3.5 py-1.5 rounded-full border border-[#222222]">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-            Powered by <strong className="text-white">Google Gemini API</strong>
-          </span>
-        </div>
-
-        <div className="bg-[#111111] border border-[#222222] rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
-          
-          {/* Main Layout Block */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
-            {/* Input Form Column */}
-            <div className="lg:col-span-7">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <label className="block text-sm font-semibold text-white tracking-wide">
-                      Paste Your CV Text <span className="text-[#39FF14] font-bold">*</span>
-                    </label>
-                    <button
-                      type="button"
-                      onClick={handleSampleClick}
-                      className="text-xs text-[#39FF14] hover:text-[#B57EDC] font-semibold flex items-center gap-1 transition-colors bg-transparent border-0 cursor-pointer"
-                    >
-                      <Sparkles className="w-3.5 h-3.5" /> Try Sample Data
-                    </button>
-                  </div>
-                  <textarea
-                    rows={8}
-                    required
-                    value={cvText}
-                    onChange={(e) => setCvText(e.target.value)}
-                    placeholder="Paste or type your resume details here (including contact info, summary, professional history, skills, and education)..."
-                    className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl p-4 text-sm text-[#DDDDDD] placeholder-gray-600 focus:outline-none focus:border-[#39FF14] focus:ring-1 focus:ring-[#39FF14] transition-all font-mono"
-                  ></textarea>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-white tracking-wide mb-2">
-                    Target Job Description <span className="text-gray-500 font-normal">(Optional)</span>
+        <Reveal className="overflow-hidden rounded-3xl bg-white shadow-2xl shadow-black/40">
+          <div className="grid lg:grid-cols-[1.15fr_1fr]">
+            <form onSubmit={handleSubmit} className="space-y-6 p-6 sm:p-10">
+              <div>
+                <div className="mb-2 flex items-center justify-between gap-4">
+                  <label htmlFor="cv-text" className="text-sm font-semibold text-ink">
+                    Your CV text <span className="text-rose-600">*</span>
                   </label>
-                  <textarea
-                    rows={4}
-                    value={jobDescription}
-                    onChange={(e) => setJobDescription(e.target.value)}
-                    placeholder="Paste the target job post description to analyze keyword gap alignment and match level..."
-                    className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl p-4 text-sm text-[#DDDDDD] placeholder-gray-600 focus:outline-none focus:border-[#B57EDC] focus:ring-1 focus:ring-[#B57EDC] transition-all font-mono"
-                  ></textarea>
-                </div>
-
-                {/* Error Box */}
-                {error && (
-                  <div className="p-4 rounded-xl bg-red-950/40 border border-red-500/30 text-red-400 text-xs flex items-center gap-3">
-                    <AlertTriangle className="w-5 h-5 flex-shrink-0 text-red-500" />
-                    <div>
-                      <strong className="block font-semibold">Scanning Failed</strong>
-                      <span>{error}</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Submit Row */}
-                <div className="flex flex-col sm:flex-row gap-4 items-center pt-2">
                   <button
-                    type="submit"
-                    disabled={loading}
-                    className={`w-full sm:w-auto px-8 py-4 rounded-xl font-sans text-xs font-bold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2.5 ${
-                      loading
-                        ? "bg-[#1A1A1A] text-gray-500 cursor-not-allowed border border-[#333333]"
-                        : "bg-[#39FF14] text-black hover:shadow-[0_0_20px_rgba(57,255,20,0.5)] border border-[#39FF14] cursor-pointer"
-                    }`}
+                    type="button"
+                    onClick={handleSampleClick}
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand hover:text-brand-dark"
                   >
-                    {loading ? (
-                      <>
-                        <RefreshCw className="w-4 h-4 animate-spin text-gray-500" />
-                        Analyzing...
-                      </>
-                    ) : (
-                      <>
-                        Scan My CV Now <ArrowRight className="w-4 h-4" />
-                      </>
-                    )}
+                    <Sparkles className="h-4 w-4" /> Try a sample
                   </button>
-
-                  {(cvText || jobDescription) && !loading && (
-                    <button
-                      type="button"
-                      onClick={handleReset}
-                      className="w-full sm:w-auto px-6 py-4 rounded-xl font-sans text-xs font-bold uppercase tracking-wider bg-transparent text-gray-400 hover:text-white border border-transparent hover:border-[#2A2A2A] transition-all duration-200 cursor-pointer"
-                    >
-                      Clear Fields
-                    </button>
-                  )}
                 </div>
-              </form>
-            </div>
+                <textarea
+                  id="cv-text"
+                  rows={9}
+                  value={cvText}
+                  onChange={(e) => setCvText(e.target.value)}
+                  placeholder="Paste your full CV: contact details, summary, experience, skills and education."
+                  className={textareaClass}
+                />
+              </div>
 
-            {/* AI Response Output Column */}
-            <div className="lg:col-span-5 h-full flex flex-col justify-center">
-              
+              <div>
+                <label htmlFor="job-text" className="mb-2 block text-sm font-semibold text-ink">
+                  Target job description <span className="font-normal text-slate-500">(optional, improves accuracy)</span>
+                </label>
+                <textarea
+                  id="job-text"
+                  rows={4}
+                  value={jobDescription}
+                  onChange={(e) => setJobDescription(e.target.value)}
+                  placeholder="Paste the job post you are applying for."
+                  className={textareaClass}
+                />
+              </div>
+
+              {error && (
+                <p role="alert" className="flex items-start gap-2 rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-800">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" /> {error}
+                </p>
+              )}
+
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <button type="submit" disabled={loading} className={btnPrimary}>
+                  {loading ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 animate-spin" /> Analyzing...
+                    </>
+                  ) : (
+                    <>
+                      Get my free score <ArrowRight className="h-4 w-4" />
+                    </>
+                  )}
+                </button>
+                {(result || cvText) && !loading && (
+                  <button type="button" onClick={handleReset} className="text-sm font-semibold text-slate-500 hover:text-ink">
+                    Clear and start over
+                  </button>
+                )}
+              </div>
+              <p className="flex items-center gap-1.5 text-xs text-slate-500">
+                <Lock className="h-3.5 w-3.5" /> Your CV is only used to generate this report.
+              </p>
+            </form>
+
+            <div className="border-t border-slate-200 bg-slate-50 p-6 sm:p-10 lg:border-l lg:border-t-0" aria-live="polite">
               <AnimatePresence mode="wait">
-                {/* 1. Empty State */}
-                {!loading && !result && (
+                {loading ? (
                   <motion.div
-                    key="empty"
+                    key="loading"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="border border-dashed border-[#222222] rounded-2xl p-8 text-center bg-[#0C0C0C]"
+                    className="flex h-full min-h-[320px] flex-col items-center justify-center text-center"
                   >
-                    <div className="w-16 h-16 rounded-full bg-[#1A1A1A] flex items-center justify-center mx-auto mb-4 border border-[#222]">
-                      <Sparkles className="w-8 h-8 text-[#B57EDC]" />
+                    <div className="relative h-16 w-16">
+                      <div className="absolute inset-0 rounded-full border-4 border-slate-200" />
+                      <div className="absolute inset-0 animate-spin rounded-full border-4 border-transparent border-t-brand" />
                     </div>
-                    <h3 className="font-sans font-bold text-lg text-white mb-2">
-                      Ready to Optimize Your Career
-                    </h3>
-                    <p className="font-sans text-xs text-gray-500 leading-relaxed max-w-sm mx-auto">
-                      Submit your resume text and let Gemini scan word counts, key phrasing, design structures, and GCC marketplace alignment.
-                    </p>
+                    <p className="mt-6 font-semibold text-ink">{loadingMessages[loadingStep]}</p>
+                    <div className="mt-4 flex gap-1.5">
+                      {loadingMessages.map((_, i) => (
+                        <span
+                          key={i}
+                          className={`h-1.5 w-6 rounded-full transition-colors ${i <= loadingStep ? "bg-brand" : "bg-slate-200"}`}
+                        />
+                      ))}
+                    </div>
                   </motion.div>
-                )}
+                ) : result ? (
+                  <motion.div key="result" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                    {(() => {
+                      const info = scoreInfo(result.score);
+                      return (
+                        <div className="flex items-center gap-5">
+                          <div className="relative h-32 w-32 shrink-0">
+                            <svg viewBox="0 0 128 128" className="h-32 w-32 -rotate-90" aria-hidden="true">
+                              <circle cx="64" cy="64" r={r} fill="none" stroke="#e2e8f0" strokeWidth="11" />
+                              <motion.circle
+                                cx="64"
+                                cy="64"
+                                r={r}
+                                fill="none"
+                                stroke={info.stroke}
+                                strokeWidth="11"
+                                strokeLinecap="round"
+                                strokeDasharray={circumference}
+                                initial={{ strokeDashoffset: circumference }}
+                                animate={{ strokeDashoffset: circumference - (result.score / 100) * circumference }}
+                                transition={{ duration: 1.2, ease: "easeOut" }}
+                              />
+                            </svg>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                              <span className="text-4xl font-extrabold text-ink tabular-nums">{result.score}</span>
+                              <span className="text-xs font-medium text-slate-500">out of 100</span>
+                            </div>
+                          </div>
+                          <div>
+                            <span className={`inline-block rounded-full px-2.5 py-1 text-xs font-bold ring-1 ${info.chip}`}>
+                              {info.label}
+                            </span>
+                            <p className="mt-2 text-sm leading-relaxed text-slate-600">{info.desc}</p>
+                          </div>
+                        </div>
+                      );
+                    })()}
 
-                {/* 2. Loading State */}
-                {loading && (
-                  <motion.div
-                    key="loading"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="border border-[#262626] rounded-2xl p-8 bg-[#0C0C0C] flex flex-col items-center text-center justify-center min-h-[300px]"
-                  >
-                    {/* Pulsing Loading Icon */}
-                    <div className="relative mb-6">
-                      <div className="w-16 h-16 rounded-full border-2 border-dashed border-[#39FF14] animate-spin"></div>
-                      <Sparkles className="w-6 h-6 text-[#39FF14] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
-                    </div>
-
-                    <h4 className="font-sans font-bold text-base text-white mb-2">
-                      Running Bot Simulations...
-                    </h4>
-
-                    {/* Progress Slider Display */}
-                    <div className="w-full bg-[#1A1A1A] h-1.5 rounded-full overflow-hidden mb-4 max-w-xs mx-auto">
-                      <div
-                        className="bg-gradient-to-r from-[#39FF14] to-[#B57EDC] h-full rounded-full transition-all duration-500"
-                        style={{ width: `${((loadingStep + 1) / loadingMessages.length) * 100}%` }}
-                      ></div>
-                    </div>
-
-                    <p className="font-sans text-xs text-gray-400 italic px-4 min-h-[36px] max-w-xs mx-auto">
-                      "{loadingMessages[loadingStep]}"
-                    </p>
-                  </motion.div>
-                )}
-
-                {/* 3. Successful Scan Output */}
-                {result && !loading && (
-                  <motion.div
-                    key="result"
-                    initial={{ opacity: 0, scale: 0.97 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="border border-[#222222] rounded-2xl bg-[#0F0F0F] overflow-hidden"
-                  >
-                    {/* Top Score Banner */}
-                    <div className={`p-6 border-b border-[#222222] ${getScoreInfo(result.score).bg} flex items-center gap-6`}>
-                      {/* Circle Progress Gauge */}
-                      <div className="relative w-20 h-20 flex-shrink-0">
-                        <svg className="w-full h-full transform -rotate-90">
-                          <circle
-                            cx="40"
-                            cy="40"
-                            r={radius}
-                            className="text-[#222222]"
-                            strokeWidth={strokeWidth}
-                            stroke="currentColor"
-                            fill="transparent"
-                            style={{ r: radius }}
-                          />
-                          <circle
-                            cx="40"
-                            cy="40"
-                            r={radius}
-                            stroke={getScoreInfo(result.score).stroke}
-                            strokeWidth={strokeWidth}
-                            fill="transparent"
-                            strokeDasharray={circumference}
-                            strokeDashoffset={circumference - (Math.min(100, Math.max(0, result.score)) / 100) * circumference}
-                            strokeLinecap="round"
-                            style={{ r: radius }}
-                          />
-                        </svg>
-                        <span className="absolute inset-0 flex items-center justify-center font-mono font-bold text-lg text-white">
-                          {result.score}%
-                        </span>
-                      </div>
-
-                      {/* Score description text */}
-                      <div>
-                        <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-1.5 ${getScoreInfo(result.score).bg} ${getScoreInfo(result.score).labelClass} border ${getScoreInfo(result.score).border}`}>
-                          {getScoreInfo(result.score).badge}
-                        </span>
-                        <h4 className="font-sans font-bold text-lg text-white leading-tight">
-                          ATS Match Rating
-                        </h4>
-                        <p className="font-sans text-xs text-gray-400 mt-1 leading-normal">
-                          {getScoreInfo(result.score).desc}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Expandable detailed output list */}
-                    <div className="p-6 space-y-6">
-                      
-                      {/* Strengths List */}
-                      <div>
-                        <h5 className="font-sans font-bold text-xs text-white uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                          <CheckCircle className="w-4 h-4 text-[#39FF14]" /> Major CV Strengths
-                        </h5>
-                        <ul className="space-y-2">
-                          {result.strengths.map((str, sIdx) => (
-                            <li key={sIdx} className="text-xs text-[#CCCCCC] flex items-start gap-2 leading-relaxed">
-                              <CornerDownRight className="w-3.5 h-3.5 text-[#39FF14] mt-0.5 flex-shrink-0" />
-                              <span>{str}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      {/* Actionable Improvements */}
-                      <div className="border-t border-[#1C1C1C] pt-5">
-                        <h5 className="font-sans font-bold text-xs text-white uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                          <AlertTriangle className="w-4 h-4 text-[#B57EDC]" /> Key Improvements Needed
-                        </h5>
-                        <ul className="space-y-2">
-                          {result.improvements.map((imp, iIdx) => (
-                            <li key={iIdx} className="text-xs text-[#CCCCCC] flex items-start gap-2 leading-relaxed">
-                              <CornerDownRight className="w-3.5 h-3.5 text-[#B57EDC] mt-0.5 flex-shrink-0" />
-                              <span>{imp}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      {/* Missing Keywords Box */}
-                      {result.missingKeywords && result.missingKeywords.length > 0 && (
-                        <div className="border-t border-[#1C1C1C] pt-5">
-                          <h5 className="font-sans font-bold text-xs text-white uppercase tracking-wider mb-2.5">
-                            Missing Keywords Target
-                          </h5>
-                          <div className="flex flex-wrap gap-1.5">
-                            {result.missingKeywords.map((kw, kIdx) => (
-                              <span key={kIdx} className="bg-[#B57EDC]/10 border border-[#B57EDC]/25 text-[#B57EDC] text-[10px] font-mono px-2 py-0.5 rounded-md">
-                                {kw}
+                    <div className="mt-8 space-y-6">
+                      {result.strengths?.length > 0 && (
+                        <div>
+                          <h3 className="text-sm font-bold text-ink">What works</h3>
+                          <ul className="mt-2.5 space-y-2">
+                            {result.strengths.map((s, i) => (
+                              <li key={i} className="flex gap-2.5 text-sm leading-relaxed text-slate-700">
+                                <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-brand" /> {s}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {result.improvements?.length > 0 && (
+                        <div>
+                          <h3 className="text-sm font-bold text-ink">What to fix</h3>
+                          <ul className="mt-2.5 space-y-2">
+                            {result.improvements.map((s, i) => (
+                              <li key={i} className="flex gap-2.5 text-sm leading-relaxed text-slate-700">
+                                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" /> {s}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {result.missingKeywords?.length > 0 && (
+                        <div>
+                          <h3 className="text-sm font-bold text-ink">Missing keywords</h3>
+                          <div className="mt-2.5 flex flex-wrap gap-1.5">
+                            {result.missingKeywords.map((k, i) => (
+                              <span key={i} className="rounded-md bg-white px-2 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-200">
+                                {k}
                               </span>
                             ))}
                           </div>
                         </div>
                       )}
-
-                      {/* Upgrade Prompt */}
-                      <div className="pt-4 border-t border-[#1C1C1C] flex flex-col sm:flex-row justify-between items-center gap-3">
-                        <span className="text-[11px] text-gray-500 font-sans leading-tight">
-                          Want an expert to rewrite and fix these issues for you?
-                        </span>
-                        <a
-                          href="#order-form"
-                          className="px-4 py-2 bg-[#39FF14] text-black font-sans font-bold text-xs rounded-lg uppercase tracking-wider hover:shadow-[0_0_15px_rgba(57,255,20,0.5)] transition-all"
-                        >
-                          Book Rewrite
-                        </a>
-                      </div>
-
                     </div>
+
+                    <div className="mt-8 rounded-2xl bg-ink p-5 text-white">
+                      <p className="font-semibold">Want a writer to fix all of this for you?</p>
+                      <p className="mt-1 text-sm text-slate-300">We will rebuild your CV around these findings.</p>
+                      <a
+                        href="#order-form"
+                        className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-300 hover:text-emerald-200"
+                      >
+                        Order a professional rewrite <ArrowRight className="h-4 w-4" />
+                      </a>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="empty"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex h-full min-h-[320px] flex-col justify-center"
+                  >
+                    <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-brand">
+                      <Gauge className="h-6 w-6" />
+                    </span>
+                    <h3 className="mt-5 text-lg font-bold text-ink">Your report will appear here</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-600">In about 15 seconds you will see:</p>
+                    <ul className="mt-4 space-y-3 text-sm text-slate-700">
+                      {[
+                        "An ATS compatibility score out of 100",
+                        "The strongest parts of your CV",
+                        "Specific fixes, ranked by impact",
+                        "Keywords from the job post you are missing",
+                      ].map((t) => (
+                        <li key={t} className="flex gap-2.5">
+                          <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-brand" /> {t}
+                        </li>
+                      ))}
+                    </ul>
                   </motion.div>
                 )}
               </AnimatePresence>
-
             </div>
-
           </div>
-
-        </div>
-
+        </Reveal>
       </div>
     </section>
   );
