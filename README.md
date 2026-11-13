@@ -67,34 +67,6 @@ src/
 public/           Favicon
 ```
 
-## Run locally
-
-**Prerequisites:** Node.js 20+ and a [Gemini API key](https://aistudio.google.com/apikey).
-
-```bash
-git clone https://github.com/ztuniio/hiresignal.git
-cd hiresignal
-npm install
-```
-
-Copy `.env.example` to `.env` and set your key:
-
-```bash
-cp .env.example .env
-```
-
-```env
-GEMINI_API_KEY="your-api-key"
-```
-
-Start the dev server, then open http://localhost:3000:
-
-```bash
-npm run dev
-```
-
-Locally the visitor country is unknown, so the currency follows your computer's time zone.
-
 ## Deploy to Vercel
 
 1. Import the repository in Vercel. It detects Vite and the functions in `api/` automatically.
