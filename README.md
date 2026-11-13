@@ -40,12 +40,6 @@ The order form opens WhatsApp with the customer's details and chosen package alr
 - Responsive layout for desktop, tablet and mobile
 - Accessible forms and navigation, with reduced-motion support
 
-## Screenshots
-
-| Home | AI CV scanner | Order form |
-| --- | --- | --- |
-| ![Home](screenshots/home.jpeg) | ![AI CV scanner](screenshots/scanner.jfif) | ![Order form](screenshots/order.jpeg) |
-
 ## Tech stack
 
 | Layer | Technology |
