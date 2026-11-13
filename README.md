@@ -4,7 +4,7 @@
 
 HireSignal helps job seekers build CVs that get past Applicant Tracking Systems (ATS) and land interviews. It pairs a free AI CV scanner, powered by Google Gemini, with professional writing packages, all in one responsive web app.
 
-🔗 **Live site:** [my-portfolio-ztqu.vercel.app](https://my-portfolio-ztqu.vercel.app/)
+🔗 **Live site:** [my-portfolio-ztqu.vercel.app](https://thehiresignal.vercel.app/)
 
 ## The problem
 
