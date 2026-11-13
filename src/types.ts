@@ -9,7 +9,7 @@ export interface ServiceItem {
 export interface PricingTier {
   id: string;
   name: string;
-  price: string;
+  price: { PKR: number; USD: number };
   description: string;
   features: string[];
   isPopular: boolean;
@@ -39,6 +39,5 @@ export interface TestimonialItem {
   id: string;
   name: string;
   role: string;
-  location: string;
   quote: string;
 }

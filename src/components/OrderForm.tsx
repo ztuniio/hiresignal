@@ -1,417 +1,241 @@
-import React, { useState, useRef } from "react";
-import { Upload, CheckCircle2, User, Mail, Phone, Briefcase, FileCode, Clipboard, ListTodo, ShieldAlert } from "lucide-react";
-import { OrderSubmission } from "../types";
+import React, { useEffect, useState } from "react";
+import { ArrowRight, CheckCircle2, Mail, Clock, FileCheck2, MessageCircle, RotateCcw } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { contact, whatsappLink } from "../data";
+import { Reveal, SectionHeading, WhatsAppIcon, btnPrimary } from "./ui";
+import { Currency, formatPrice } from "../currency";
+import { pricingTiers } from "../data";
 
 interface OrderFormProps {
   selectedServiceId: string;
+  currency: Currency;
 }
 
-export default function OrderForm({ selectedServiceId }: OrderFormProps) {
-  // Pre-seeded local orders for visual rhythm
-  const [orders, setOrders] = useState<OrderSubmission[]>([
-    {
-      id: "HS-9831",
-      fullName: "Kamran Akram",
-      email: "kamran.akram@gmail.com",
-      whatsapp: "+92 321 8765432",
-      service: "Gulf-Market CV",
-      jobTitle: "Civil Infrastructure Engineer",
-      fileName: "kamran_cv_draft_v2.pdf",
-      notes: "Targeting project manager openings in KSA (NEOM project) and Doha, Qatar.",
-      status: "Writer Assigned",
-      date: "July 20, 2026",
-    },
-    {
-      id: "HS-9830",
-      fullName: "Sara Malik",
-      email: "sara.m@outlook.com",
-      whatsapp: "+92 301 5556677",
-      service: "ATS-Optimized CV",
-      jobTitle: "Senior HR Specialist",
-      fileName: "Sara_Malik_HR_2026.docx",
-      notes: "Please focus heavily on recruiting metrics and talent retention systems.",
-      status: "Delivered",
-      date: "July 19, 2026",
-    },
-  ]);
+const serviceOptions = [
+  { group: "Packages", items: [
+    { id: "starter", label: "Starter Package" },
+    { id: "professional", label: "Professional" },
+    { id: "bundle", label: "Complete Bundle" },
+  ] },
+  { group: "Individual services", items: [
+    { id: "ats-cv", label: "ATS-Optimized CV" },
+    { id: "designed-cv", label: "Designed / Sidebar CV" },
+    { id: "country-cv", label: "Country-Specific CV" },
+    { id: "cover-letter", label: "Tailored Cover Letter" },
+    { id: "linkedin", label: "LinkedIn Optimization" },
+    { id: "cv-template", label: "CV Templates" },
+  ] },
+];
 
-  // Form State
+const serviceLabel = (id: string, currency: Currency) => {
+  const label = serviceOptions.flatMap((g) => g.items).find((i) => i.id === id)?.label ?? id;
+  const tier = pricingTiers.find((t) => t.id === id);
+  return tier ? `${label} (${formatPrice(tier.price[currency], currency)})` : label;
+};
+
+const nextSteps = [
+  { icon: MessageCircle, title: "WhatsApp opens with your order", text: "Your details are filled in. Just press send." },
+  { icon: FileCheck2, title: "Share your current CV", text: "Attach your CV in the chat, or describe your experience if you do not have one." },
+  { icon: Clock, title: "Work starts within 12 hours", text: "A writer confirms your order and delivery date." },
+];
+
+const inputClass =
+  "w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-[15px] text-ink placeholder:text-slate-400 transition focus:border-brand focus:outline-none focus:ring-4 focus:ring-emerald-100";
+const labelClass = "mb-1.5 block text-sm font-semibold text-ink";
+
+export default function OrderForm({ selectedServiceId, currency }: OrderFormProps) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [whatsapp, setWhatsapp] = useState("");
-  const [selectedService, setSelectedService] = useState(selectedServiceId || "ats-cv");
+  const [phone, setPhone] = useState("");
+  const [service, setService] = useState(selectedServiceId || "professional");
   const [jobTitle, setJobTitle] = useState("");
+  const [market, setMarket] = useState("");
   const [notes, setNotes] = useState("");
-  const [fileName, setFileName] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [newOrderId, setNewOrderId] = useState("");
+  const [sentMessage, setSentMessage] = useState<string | null>(null);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Sync selected service if changed from pricing selection
-  React.useEffect(() => {
-    if (selectedServiceId) {
-      setSelectedService(selectedServiceId);
-    }
+  useEffect(() => {
+    if (selectedServiceId) setService(selectedServiceId);
   }, [selectedServiceId]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFileName(file.name);
-    }
+  const buildMessage = () => {
+    const details = [
+      `Name: ${fullName.trim()}`,
+      `Email: ${email.trim()}`,
+      `WhatsApp: ${phone.trim()}`,
+      `Service: ${serviceLabel(service, currency)}`,
+      `Target role: ${jobTitle.trim()}`,
+      market.trim() ? `Target country: ${market.trim()}` : "",
+      notes.trim() ? `Notes: ${notes.trim()}` : "",
+    ].filter(Boolean);
+    return `Hi HireSignal, I'd like to place an order.\n\n${details.join("\n")}`;
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
-
-    // Simulate 1.5s network lag for client-side immersion
-    setTimeout(() => {
-      const generatedId = `HS-${Math.floor(1000 + Math.random() * 9000)}`;
-      const newOrder: OrderSubmission = {
-        id: generatedId,
-        fullName,
-        email,
-        whatsapp,
-        service: serviceNameMap[selectedService] || selectedService,
-        jobTitle,
-        fileName: fileName || "No draft uploaded",
-        notes: notes || "No custom notes provided.",
-        status: "Received",
-        date: new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
-      };
-
-      setOrders((prev) => [newOrder, ...prev]);
-      setNewOrderId(generatedId);
-      setShowSuccess(true);
-      setSubmitting(false);
-
-      // Reset form fields
-      setFullName("");
-      setEmail("");
-      setWhatsapp("");
-      setJobTitle("");
-      setNotes("");
-      setFileName("");
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }, 1500);
+    const message = buildMessage();
+    setSentMessage(message);
+    window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
   };
 
-  const serviceNameMap: { [key: string]: string } = {
-    "ats-cv": "ATS-Optimized CV",
-    "designed-cv": "Designed / Sidebar CV",
-    "gulf-cv": "Gulf-Market CV",
-    "cover-letter": "Tailored Cover Letter",
-    "linkedin": "LinkedIn Optimization",
-    "cv-template": "Sleek CV Templates",
-    "starter": "Starter Package",
-    "professional": "Professional GCC Package",
-    "bundle": "Complete Bundle",
-  };
+  const mailtoHref = (body: string) =>
+    `mailto:${contact.email}?subject=${encodeURIComponent(`CV order: ${serviceLabel(service, currency)}`)}&body=${encodeURIComponent(body)}`;
 
   return (
-    <section id="order-form" className="py-20 md:py-28 bg-[#0A0A0A] border-b border-[#1A1A1A] relative">
-      <div className="absolute top-1/2 right-1/4 w-[350px] h-[350px] rounded-full bg-[#B57EDC]/3 blur-[120px] pointer-events-none"></div>
+    <section id="order-form" className="border-y border-slate-200 bg-white py-24 md:py-32">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Order"
+          title="Start your order"
+          description="Tell us what you need. Your order is sent to our team on WhatsApp, where we confirm the details with you."
+        />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="font-sans font-bold text-3xl sm:text-4xl text-white tracking-tight">
-            Order Your <span className="text-[#39FF14]">ATS-Optimized CV</span>
-          </h2>
-          <p className="font-sans text-[#999999] mt-4 leading-relaxed">
-            Ready to secure interviews? Submit your info below. Our senior writing partners will review your raw background draft and start work within 12 hours.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
-          {/* Order Form Entry Panel */}
-          <div className="lg:col-span-7 bg-[#111111] border border-[#222222] p-6 sm:p-10 rounded-3xl shadow-xl">
-            
+        <div className="grid gap-8 lg:grid-cols-12 lg:gap-12">
+          <Reveal className="rounded-3xl border border-slate-200 bg-paper p-6 sm:p-10 lg:col-span-7">
             <AnimatePresence mode="wait">
-              {!showSuccess ? (
+              {!sentMessage ? (
                 <motion.form
-                  key="order-form"
-                  onSubmit={handleFormSubmit}
+                  key="form"
+                  onSubmit={handleSubmit}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="space-y-6"
+                  className="grid gap-5 sm:grid-cols-2"
                 >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {/* Full Name */}
-                    <div>
-                      <label className="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-bold">
-                        Full Name <span className="text-[#39FF14]">*</span>
-                      </label>
-                      <div className="relative">
-                        <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-500">
-                          <User className="w-4 h-4" />
-                        </span>
-                        <input
-                          type="text"
-                          required
-                          value={fullName}
-                          onChange={(e) => setFullName(e.target.value)}
-                          placeholder="Zakir Khan"
-                          className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-[#39FF14] transition-all"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Email */}
-                    <div>
-                      <label className="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-bold">
-                        Email Address <span className="text-[#39FF14]">*</span>
-                      </label>
-                      <div className="relative">
-                        <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-500">
-                          <Mail className="w-4 h-4" />
-                        </span>
-                        <input
-                          type="email"
-                          required
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="client@gmail.com"
-                          className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-[#39FF14] transition-all"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {/* WhatsApp */}
-                    <div>
-                      <label className="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-bold">
-                        Phone / WhatsApp <span className="text-[#39FF14]">*</span>
-                      </label>
-                      <div className="relative">
-                        <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-500">
-                          <Phone className="w-4 h-4" />
-                        </span>
-                        <input
-                          type="tel"
-                          required
-                          value={whatsapp}
-                          onChange={(e) => setWhatsapp(e.target.value)}
-                          placeholder="+92 300 1234567"
-                          className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-[#39FF14] transition-all"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Service Selection */}
-                    <div>
-                      <label className="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-bold">
-                        Select Service Option <span className="text-[#39FF14]">*</span>
-                      </label>
-                      <div className="relative">
-                        <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-500 pointer-events-none">
-                          <Clipboard className="w-4 h-4" />
-                        </span>
-                        <select
-                          value={selectedService}
-                          onChange={(e) => setSelectedService(e.target.value)}
-                          className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-[#39FF14] transition-all appearance-none cursor-pointer"
-                        >
-                          <option value="ats-cv">ATS-Optimized CV (Rs. 1,500)</option>
-                          <option value="designed-cv">Designed / Sidebar CV</option>
-                          <option value="gulf-cv">Gulf-Market CV</option>
-                          <option value="cover-letter">Tailored Cover Letter</option>
-                          <option value="linkedin">LinkedIn Optimization</option>
-                          <option value="cv-template">Sleek CV Templates</option>
-                          <option value="starter">Starter Package (Rs. 1,500)</option>
-                          <option value="professional">Professional GCC (Rs. 2,500)</option>
-                          <option value="bundle">Complete Bundle (Rs. 3,500)</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Target Role */}
                   <div>
-                    <label className="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-bold">
-                      Current Title / Target Role <span className="text-[#39FF14]">*</span>
+                    <label htmlFor="o-name" className={labelClass}>Full name</label>
+                    <input id="o-name" type="text" required autoComplete="name" value={fullName}
+                      onChange={(e) => setFullName(e.target.value)} placeholder="Ayesha Khan" className={inputClass} />
+                  </div>
+                  <div>
+                    <label htmlFor="o-email" className={labelClass}>Email</label>
+                    <input id="o-email" type="email" required autoComplete="email" value={email}
+                      onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className={inputClass} />
+                  </div>
+                  <div>
+                    <label htmlFor="o-phone" className={labelClass}>WhatsApp number</label>
+                    <input id="o-phone" type="tel" required autoComplete="tel" value={phone}
+                      onChange={(e) => setPhone(e.target.value)} placeholder="+92 300 1234567" className={inputClass} />
+                  </div>
+                  <div>
+                    <label htmlFor="o-service" className={labelClass}>Service</label>
+                    <select id="o-service" value={service} onChange={(e) => setService(e.target.value)} className={inputClass}>
+                      {serviceOptions.map((g) => (
+                        <optgroup key={g.group} label={g.group}>
+                          {g.items.map((i) => (
+                            <option key={i.id} value={i.id}>{serviceLabel(i.id, currency)}</option>
+                          ))}
+                        </optgroup>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="o-role" className={labelClass}>Target role</label>
+                    <input id="o-role" type="text" required value={jobTitle}
+                      onChange={(e) => setJobTitle(e.target.value)} placeholder="e.g. Senior Accountant" className={inputClass} />
+                  </div>
+                  <div>
+                    <label htmlFor="o-market" className={labelClass}>
+                      Target country <span className="font-normal text-slate-500">(optional)</span>
                     </label>
-                    <div className="relative">
-                      <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-500">
-                        <Briefcase className="w-4 h-4" />
-                      </span>
-                      <input
-                        type="text"
-                        required
-                        value={jobTitle}
-                        onChange={(e) => setJobTitle(e.target.value)}
-                        placeholder="e.g. Sales Director, Senior Systems Analyst"
-                        className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-[#39FF14] transition-all"
-                      />
-                    </div>
+                    <input id="o-market" type="text" value={market} autoComplete="off"
+                      onChange={(e) => setMarket(e.target.value)} placeholder="Where are you applying?" className={inputClass} />
                   </div>
-
-                  {/* File Upload (Fake Presentation) */}
-                  <div>
-                    <label className="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-bold">
-                      Upload Current CV Draft <span className="text-gray-500 font-normal">(Optional)</span>
+                  <div className="sm:col-span-2">
+                    <label htmlFor="o-notes" className={labelClass}>
+                      Anything we should know? <span className="font-normal text-slate-500">(optional)</span>
                     </label>
-                    <div
-                      onClick={() => fileInputRef.current?.click()}
-                      className="border border-dashed border-[#262626] hover:border-[#39FF14]/50 rounded-xl p-5 text-center cursor-pointer bg-[#0A0A0A] transition-all"
-                    >
-                      <Upload className="w-7 h-7 mx-auto mb-2 text-gray-500 group-hover:text-white" />
-                      <span className="block text-xs text-gray-400">
-                        {fileName ? (
-                          <strong className="text-[#39FF14] font-mono">{fileName}</strong>
-                        ) : (
-                          "Drag & drop your existing resume here or click to browse"
-                        )}
-                      </span>
-                      <span className="block text-[10px] text-gray-600 mt-1 uppercase tracking-widest font-mono">
-                        Accepts PDF, DOCX, TXT
-                      </span>
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handleFileChange}
-                        accept=".pdf,.docx,.doc,.txt"
-                        className="hidden"
-                      />
-                    </div>
+                    <textarea id="o-notes" rows={4} value={notes} onChange={(e) => setNotes(e.target.value)}
+                      placeholder="Target companies, career changes, gaps, or a deadline."
+                      className={inputClass} />
                   </div>
-
-                  {/* Notes */}
-                  <div>
-                    <label className="block text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-bold">
-                      Special Delivery Notes / Requirements
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      placeholder="List any target target countries, focus keywords, specific career gaps, or urgencies here..."
-                      className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl p-4 text-sm text-[#DDDDDD] placeholder-gray-600 focus:outline-none focus:border-[#39FF14] transition-all font-sans"
-                    ></textarea>
-                  </div>
-
-                  {/* Submit Button */}
-                  <div>
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="w-full py-4 rounded-xl font-sans text-xs font-bold uppercase tracking-wider bg-[#39FF14] text-black hover:shadow-[0_0_20px_rgba(57,255,20,0.5)] border border-[#39FF14] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2.5 cursor-pointer font-black"
-                    >
-                      {submitting ? "Processing Your Order..." : "Submit Secure Order & Contact"}
+                  <div className="sm:col-span-2">
+                    <button type="submit" className={`${btnPrimary} w-full py-4 text-base`}>
+                      <WhatsAppIcon className="h-5 w-5" /> Send order on WhatsApp
                     </button>
-                    <span className="block text-[10px] text-center text-gray-600 mt-2 font-mono uppercase tracking-widest">
-                      🔒 Secured via offline lead routing — No payment details collected here
-                    </span>
+                    <p className="mt-3 text-center text-xs text-slate-500">
+                      No payment is taken here. We confirm price and delivery with you first.
+                    </p>
                   </div>
                 </motion.form>
               ) : (
                 <motion.div
-                  key="success"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  key="sent"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="text-center py-10"
+                  className="py-6 text-center"
+                  role="status"
                 >
-                  <div className="w-20 h-20 bg-[#39FF14]/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-[#39FF14]/30">
-                    <CheckCircle2 className="w-10 h-10 text-[#39FF14]" />
-                  </div>
-                  <h3 className="font-sans font-bold text-2xl text-white mb-2">
-                    Order Submitted Successfully!
-                  </h3>
-                  <p className="font-sans text-sm text-[#CCCCCC] max-w-md mx-auto leading-relaxed mb-6">
-                    Thank you! Your request has been assigned reference ID <strong className="font-mono text-white text-[#39FF14]">{newOrderId}</strong>. We have logged this directly onto our team dashboard below.
+                  <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-brand">
+                    <CheckCircle2 className="h-7 w-7" />
+                  </span>
+                  <h3 className="mt-5 text-2xl font-bold text-ink">Almost done</h3>
+                  <p className="mx-auto mt-2 max-w-md text-slate-600">
+                    WhatsApp should have opened with your order. Press <strong>send</strong> and attach your current CV in
+                    the chat. We reply within 12 hours.
                   </p>
-                  <div className="p-4 bg-[#0A0A0A] border border-[#222] rounded-xl inline-block text-left max-w-sm mx-auto mb-8">
-                    <span className="block text-xs text-gray-400 font-sans leading-relaxed">
-                      👉 <strong>What happens next?</strong> Zakir Khan and the HireSignal team will contact you on WhatsApp shortly to confirm pricing, revisions, and begin drafting.
-                    </span>
-                  </div>
-                  <div>
-                    <button
-                      onClick={() => setShowSuccess(false)}
-                      className="px-6 py-2.5 rounded-lg font-sans text-xs font-semibold uppercase tracking-wider bg-transparent border border-[#39FF14] text-[#39FF14] hover:bg-[#39FF14] hover:text-black transition-all cursor-pointer"
+                  <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                    <a href={whatsappLink(sentMessage)} target="_blank" rel="noopener noreferrer" className={btnPrimary}>
+                      <WhatsAppIcon className="h-4 w-4" /> Open WhatsApp again
+                    </a>
+                    <a
+                      href={mailtoHref(sentMessage)}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-sm font-semibold text-ink hover:bg-slate-50"
                     >
-                      Place Another Order
-                    </button>
+                      <Mail className="h-4 w-4" /> Send by email instead
+                    </a>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => setSentMessage(null)}
+                    className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-ink"
+                  >
+                    <RotateCcw className="h-4 w-4" /> Edit my order
+                  </button>
                 </motion.div>
               )}
             </AnimatePresence>
+          </Reveal>
 
-          </div>
-
-          {/* Dynamic Order log dashboard (In-app Log) */}
-          <div className="lg:col-span-5 h-full flex flex-col">
-            <div className="p-6 rounded-3xl border border-[#222222] bg-[#111111] h-full flex flex-col justify-between">
-              <div>
-                {/* Header info */}
-                <div className="flex items-center justify-between pb-4 border-b border-[#222222] mb-6">
-                  <div>
-                    <h4 className="font-sans font-bold text-base text-white flex items-center gap-2">
-                      <ListTodo className="w-5 h-5 text-[#B57EDC]" /> Direct Order Queue
-                    </h4>
-                    <span className="text-[10px] text-gray-500 font-mono uppercase tracking-wider">
-                      Real-time Session Activity Log
+          <Reveal delay={120} className="lg:col-span-5">
+            <div className="rounded-3xl bg-ink p-8 text-white sm:p-10">
+              <h3 className="text-lg font-bold">What happens next</h3>
+              <ol className="mt-6 space-y-6">
+                {nextSteps.map((s) => (
+                  <li key={s.title} className="flex gap-4">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-emerald-300">
+                      <s.icon className="h-5 w-5" />
                     </span>
-                  </div>
-                  <span className="text-[10px] text-[#39FF14] bg-[#39FF14]/10 px-2.5 py-1 rounded-full border border-[#39FF14]/20 font-mono font-bold animate-pulse">
-                    LIVE
+                    <div>
+                      <p className="font-semibold">{s.title}</p>
+                      <p className="mt-1 text-sm leading-relaxed text-slate-300">{s.text}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <div className="mt-6 rounded-3xl border border-slate-200 p-8">
+              <p className="font-semibold text-ink">Prefer to talk first?</p>
+              <p className="mt-1 text-sm text-slate-600">Ask us anything before you order.</p>
+              <div className="mt-5 space-y-3">
+                <a href={whatsappLink("Hi HireSignal, I have a question about your CV services.")} target="_blank"
+                  rel="noopener noreferrer" className="flex items-center gap-3 text-sm font-medium text-ink hover:text-brand">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-brand">
+                    <WhatsAppIcon className="h-4 w-4" />
                   </span>
-                </div>
-
-                {/* Queue lists */}
-                <div className="space-y-4 max-h-[460px] overflow-y-auto pr-1">
-                  {orders.map((ord) => {
-                    const statusColors: { [key: string]: string } = {
-                      Received: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-                      "Under Review": "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-                      "Writer Assigned": "bg-purple-500/10 text-purple-400 border-purple-500/20",
-                      Delivered: "bg-[#39FF14]/10 text-[#39FF14] border-[#39FF14]/20",
-                    };
-
-                    return (
-                      <div key={ord.id} className="p-4 rounded-xl bg-[#0A0A0A] border border-[#1C1C1C] hover:border-gray-800 transition-all">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-mono text-xs font-black text-white">{ord.id}</span>
-                          <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${statusColors[ord.status] || "bg-gray-500/10 text-gray-400"}`}>
-                            {ord.status}
-                          </span>
-                        </div>
-                        <h5 className="font-sans font-semibold text-xs text-white">{ord.fullName}</h5>
-                        <p className="font-sans text-[11px] text-gray-400 mt-0.5">
-                          Service: <span className="text-[#B57EDC]">{ord.service}</span>
-                        </p>
-                        <p className="font-sans text-[11px] text-gray-400">
-                          Role: <span className="text-gray-300 font-mono">{ord.jobTitle}</span>
-                        </p>
-                        <p className="font-sans text-[10px] text-gray-600 mt-2 italic border-t border-[#151515] pt-2">
-                          "{ord.notes}"
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Bottom notice */}
-              <div className="mt-6 pt-4 border-t border-[#222222] text-center">
-                <span className="inline-flex items-center gap-1.5 font-sans text-[10px] text-gray-500 leading-normal">
-                  <ShieldAlert className="w-3.5 h-3.5 text-[#B57EDC]" /> All submissions are handled within standard client privacy guidelines.
-                </span>
+                  {contact.whatsappDisplay}
+                </a>
+                <a href={`mailto:${contact.email}`} className="flex items-center gap-3 text-sm font-medium text-ink hover:text-brand">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-brand">
+                    <Mail className="h-4 w-4" />
+                  </span>
+                  {contact.email}
+                </a>
               </div>
             </div>
-          </div>
-
+          </Reveal>
         </div>
-
       </div>
     </section>
   );

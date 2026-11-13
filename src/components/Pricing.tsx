@@ -1,103 +1,97 @@
 import React from "react";
 import { Check, ArrowRight } from "lucide-react";
 import { pricingTiers } from "../data";
-import { motion } from "motion/react";
+import { Reveal, SectionHeading } from "./ui";
+import { Currency, currencies, formatPrice } from "../currency";
 
 interface PricingProps {
-  onSelectTier: (tierName: string) => void;
+  onSelectTier: (tierId: string) => void;
+  currency: Currency;
+  onCurrencyChange: (currency: Currency) => void;
 }
 
-export default function Pricing({ onSelectTier }: PricingProps) {
+export default function Pricing({ onSelectTier, currency, onCurrencyChange }: PricingProps) {
   return (
-    <section id="pricing" className="py-20 md:py-28 bg-[#0A0A0A] border-b border-[#1A1A1A] relative">
-      <div className="absolute bottom-0 left-1/4 w-[350px] h-[350px] rounded-full bg-[#39FF14]/3 blur-[110px] pointer-events-none"></div>
+    <section id="pricing" className="py-24 md:py-32">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Pricing"
+          title="Simple, one-time pricing"
+          description="Pay once per package. No subscriptions and no hidden fees."
+        />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="font-sans font-bold text-3xl sm:text-4xl text-white tracking-tight">
-            Transparent, <span className="text-[#B57EDC]">Affordable Pricing</span>
-          </h2>
-          <p className="font-sans text-[#999999] mt-4 leading-relaxed">
-            High-value investments that yield instant results. No hidden taxes or recurring fees — pay once, secure your interview calls, and take your next career leap.
-          </p>
+        <div className="-mt-4 mb-12 flex justify-center md:-mt-6">
+          <div role="radiogroup" aria-label="Currency" className="inline-flex rounded-xl bg-slate-200/70 p-1">
+            {currencies.map((c) => {
+              const active = c.code === currency;
+              return (
+                <button
+                  key={c.code}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => onCurrencyChange(c.code)}
+                  className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                    active ? "bg-white text-ink shadow-sm" : "text-slate-600 hover:text-ink"
+                  }`}
+                >
+                  {c.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-5xl lg:max-w-none mx-auto">
+        <div className="mx-auto grid max-w-md gap-6 lg:max-w-none lg:grid-cols-3 lg:items-stretch">
           {pricingTiers.map((tier, idx) => {
+            const popular = tier.isPopular;
             return (
-              <motion.div
+              <Reveal
                 key={tier.id}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className={`relative rounded-3xl p-8 bg-[#111111] border flex flex-col justify-between transition-all duration-300 ${
-                  tier.isPopular
-                    ? "border-[#B57EDC] shadow-[0_0_25px_rgba(181,126,220,0.15)] ring-1 ring-[#B57EDC]/50 lg:scale-105 z-10"
-                    : "border-[#222222] hover:border-white/20"
+                delay={idx * 100}
+                className={`relative flex flex-col rounded-3xl p-8 ${
+                  popular
+                    ? "bg-ink text-white shadow-2xl shadow-emerald-900/20 ring-1 ring-ink lg:-my-4 lg:py-12"
+                    : "border border-slate-200 bg-white"
                 }`}
               >
-                {/* Popular Badge */}
-                {tier.isPopular && (
-                  <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-[#B57EDC] text-black font-sans text-xs font-black uppercase tracking-widest">
-                    Most Popular
+                {popular && (
+                  <span className="absolute -top-3.5 left-8 rounded-full bg-emerald-400 px-3 py-1 text-xs font-bold text-emerald-950">
+                    Most popular
                   </span>
                 )}
+                <h3 className={`text-lg font-bold ${popular ? "text-white" : "text-ink"}`}>{tier.name}</h3>
+                <p className={`mt-2 min-h-[48px] text-sm leading-relaxed ${popular ? "text-slate-300" : "text-slate-600"}`}>
+                  {tier.description}
+                </p>
+                <p className="mt-6 flex items-baseline gap-2">
+                  <span className={`text-4xl font-extrabold tracking-tight tabular-nums ${popular ? "text-white" : "text-ink"}`}>
+                    {formatPrice(tier.price[currency], currency)}
+                  </span>
+                  <span className={`text-sm ${popular ? "text-slate-400" : "text-slate-500"}`}>one-time</span>
+                </p>
 
-                <div>
-                  {/* Package Name */}
-                  <h3 className="font-sans font-bold text-2xl text-white mb-2 tracking-tight">
-                    {tier.name}
-                  </h3>
+                <button
+                  type="button"
+                  onClick={() => onSelectTier(tier.id)}
+                  className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3.5 text-sm font-semibold transition active:scale-[0.98] ${
+                    popular
+                      ? "bg-emerald-400 text-emerald-950 hover:bg-emerald-300"
+                      : "border border-slate-300 bg-white text-ink hover:border-slate-400 hover:bg-slate-50"
+                  }`}
+                >
+                  Choose {tier.name.replace(" Package", "")} <ArrowRight className="h-4 w-4" />
+                </button>
 
-                  {/* Description */}
-                  <p className="font-sans text-xs text-gray-400 mb-6 min-h-[32px]">
-                    {tier.description}
-                  </p>
-
-                  {/* Price */}
-                  <div className="flex items-baseline text-white gap-2 mb-8">
-                    <span className="font-sans font-black text-4xl sm:text-5xl text-[#39FF14]">
-                      {tier.price}
-                    </span>
-                    <span className="font-sans text-xs text-gray-500 uppercase tracking-wider font-semibold">
-                      / Flat Rate
-                    </span>
-                  </div>
-
-                  {/* Features List */}
-                  <div className="border-t border-[#1A1A1A] pt-6 mb-8">
-                    <ul className="space-y-4">
-                      {tier.features.map((feature, fIdx) => (
-                        <li key={fIdx} className="flex items-start gap-3">
-                          <div className={`p-0.5 rounded-full bg-black mt-0.5 border ${tier.isPopular ? 'border-[#B57EDC]' : 'border-[#39FF14]'}`}>
-                            <Check className={`w-3.5 h-3.5 ${tier.isPopular ? 'text-[#B57EDC]' : 'text-[#39FF14]'}`} />
-                          </div>
-                          <span className="font-sans text-sm text-[#DDDDDD] leading-tight">
-                            {feature}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                {/* CTA Button */}
-                <div>
-                  <button
-                    onClick={() => onSelectTier(tier.id)}
-                    className={`w-full py-4 px-6 rounded-xl font-sans text-xs font-bold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 ${
-                      tier.isPopular
-                        ? "bg-[#B57EDC] text-black hover:shadow-[0_0_20px_rgba(181,126,220,0.6)] hover:bg-[#A368CE]"
-                        : "bg-transparent text-white border border-[#39FF14] hover:bg-[#39FF14] hover:text-black hover:shadow-[0_0_20px_rgba(57,255,20,0.4)]"
-                    }`}
-                  >
-                    Select {tier.name} <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </motion.div>
+                <ul className={`mt-8 space-y-3.5 border-t pt-8 ${popular ? "border-white/10" : "border-slate-100"}`}>
+                  {tier.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-3 text-sm">
+                      <Check className={`mt-0.5 h-4 w-4 shrink-0 ${popular ? "text-emerald-400" : "text-brand"}`} />
+                      <span className={popular ? "text-slate-200" : "text-slate-700"}>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
             );
           })}
         </div>

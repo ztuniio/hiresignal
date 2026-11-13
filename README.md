@@ -1,284 +1,126 @@
-# HireSignal – AI-Powered ATS Resume Analysis & Career Services Platform
+# HireSignal
 
-HireSignal is an AI-powered web application designed to help job seekers in Pakistan and Gulf countries create ATS-friendly resumes, analyze CV quality using AI, and order professional resume writing services.
+**AI-powered ATS resume analysis and professional CV writing, for job seekers worldwide**
 
----
+HireSignal helps job seekers build CVs that get past Applicant Tracking Systems (ATS) and land interviews. It pairs a free AI CV scanner, powered by Google Gemini, with professional writing packages, all in one responsive web app.
 
-# Problem Statement
+🔗 **Live site:** [my-portfolio-ztqu.vercel.app](https://my-portfolio-ztqu.vercel.app/)
 
-Many job seekers struggle to pass Applicant Tracking Systems (ATS) because their resumes lack proper formatting, keywords, and optimization. This leads to missed interview opportunities despite having the required skills.
+## The problem
 
-HireSignal solves this problem by combining AI-powered resume analysis with professional career services in one platform.
+Many qualified candidates never reach an interview because software rejects their CV first: complex layouts don't parse, and missing keywords push them down the shortlist. HireSignal shows them exactly what to fix and offers expert help to fix it.
 
----
+## Features
 
-# Features
+### Free AI CV score scanner
+Paste a CV and, optionally, a target job description to get an instant report:
+- ATS compatibility score out of 100
+- Strengths of the CV
+- Specific, prioritized improvements
+- Keywords from the job description that are missing
 
-## Home Page
-- Modern responsive landing page
-- Professional UI/UX
-- Call-to-action buttons
-- Career statistics
-- Navigation menu
+### Career services
+ATS-Optimized CV · Designed / Sidebar CV · Country-Specific CV · Tailored Cover Letter · LinkedIn Optimization · CV Templates
 
-## Career Services
-Users can explore different career services including:
+### Pricing in the visitor's currency
+| Package | Includes | PKR | USD |
+| --- | --- | --- | --- |
+| **Starter** | ATS-optimized CV, keyword alignment, PDF + Word, 1 revision, 3-day delivery | Rs. 1,500 | $19 |
+| **Professional** | CV localized to your target country, cover letter, keyword research, 3 revisions, 2-day delivery | Rs. 2,500 | $29 |
+| **Complete Bundle** | Everything in Professional, LinkedIn optimization, 1-on-1 WhatsApp support, cold-email guide, unlimited revisions, 24–48h delivery | Rs. 3,500 | $49 |
 
-- ATS-Optimized CV
-- Designed / Sidebar CV
-- Gulf-Market CV
-- Cover Letter Writing
-- LinkedIn Profile Optimization
-- CV Templates
+Visitors in Pakistan see prices in rupees and everyone else sees US dollars. A currency switch above the pricing table lets visitors change it, and their choice is remembered. Detection uses the country Vercel reports for the request (`/api/geo`), with the browser's time zone as a fallback.
 
----
+### Ordering over WhatsApp
+The order form opens WhatsApp with the customer's details and chosen package already written out, ready to send. Customers attach their current CV in the chat. An email option is offered as a fallback.
 
-## Pricing Plans
+### Also included
+- "How it works" walkthrough and FAQ
+- Client testimonials
+- Responsive layout for desktop, tablet and mobile
+- Accessible forms and navigation, with reduced-motion support
 
-Three affordable packages are available:
+## Screenshots
 
-### Starter Package
-- ATS-Optimized CV
-- ATS Keyword Alignment
-- PDF + Editable Word File
-- One Revision
+| Home | AI CV scanner | Order form |
+| --- | --- | --- |
+| ![Home](screenshots/home.jpeg) | ![AI CV scanner](screenshots/scanner.jfif) | ![Order form](screenshots/order.jpeg) |
 
-### Professional GCC Package
-- ATS + GCC Localized CV
-- Cover Letter
-- Industry Keyword Research
-- GCC Recruiter Alignment
-- Priority Delivery
+## Tech stack
 
-### Complete Bundle
-- Everything in Professional GCC
-- LinkedIn Optimization
-- WhatsApp Consultation
-- Cold Email Guide
-- Unlimited Revisions
+| Layer | Technology |
+| --- | --- |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS 4, Motion, Lucide icons |
+| API | Vercel serverless functions in production; Express for local development |
+| AI | Google Gemini via the `@google/genai` SDK, with automatic model fallback |
+| Hosting | Vercel |
 
----
+The Gemini API key stays on the server. The browser calls `/api/cv-check`, which calls Gemini.
 
-# AI CV Score Scanner
+## Project structure
 
-Powered by **Google Gemini API**
+```
+api/
+  cv-check.ts     Vercel function: POST /api/cv-check (AI CV score)
+  geo.ts          Vercel function: GET /api/geo (visitor country, for currency)
+lib/
+  cvCheck.ts      Gemini prompt and scoring logic, shared by api/ and server.ts
+server.ts         Express server for local development (serves the same API routes)
+src/
+  components/     Page sections (Hero, Services, Pricing, AICVCheck, OrderForm, ...)
+  currency.ts     Currency detection, switching and price formatting
+  data.ts         Services, pricing, FAQs, testimonials and contact details
+public/           Favicon
+```
 
-Users can:
+## Run locally
 
-- Paste resume text
-- Add an optional target job description
-- Scan resume using AI
-- Receive ATS optimization suggestions
-- Improve keyword relevance
-- Optimize for GCC recruitment
-
----
-
-# AI Resume Analysis
-
-The AI evaluates:
-
-- ATS Compatibility
-- Resume Structure
-- Professional Summary
-- Skills Section
-- Keyword Density
-- Missing Keywords
-- Formatting Quality
-- Job Description Match
-- GCC Hiring Recommendations
-
----
-
-# CV Order System
-
-Users can:
-
-- Enter personal information
-- Select a service package
-- Upload an existing CV
-- Add special requirements
-- Submit an order request
-
----
-
-# File Upload Support
-
-Supported formats:
-
-- PDF
-- DOCX
-- TXT
-
----
-
-# Live Order Dashboard
-
-Displays sample order activity including:
-
-- Order ID
-- Writer Assigned
-- Delivered Status
-- Client Role
-- Service Type
-
----
-
-# Success Stories
-
-Displays sample testimonials from professionals who successfully secured opportunities in:
-
-- UAE
-- Saudi Arabia
-- Qatar
-
----
-
-# Contact Options
-
-Users can contact HireSignal through:
-
-- WhatsApp
-- Email
-- Instagram
-
----
-
-# Responsive Design
-
-The application is fully responsive and optimized for:
-
-- Desktop
-- Tablet
-- Mobile
-
----
-
-# AI Feature
-
-## Purpose
-
-The AI analyzes resumes and provides intelligent recommendations to improve ATS compatibility and increase interview chances.
-
-### AI Instructions
-
-The AI is instructed to:
-
-- Analyze resume quality
-- Evaluate ATS compatibility
-- Compare the resume with the target job description
-- Identify missing keywords
-- Suggest professional improvements
-- Recommend better formatting
-- Optimize resumes for GCC recruitment standards
-- Generate actionable feedback
-
----
-
-# Technologies Used
-
-## Frontend
-
-- HTML5
-- CSS3
-- JavaScript
-
-## AI
-
-- Google AI Studio
-
-## Development Tools
-
-- ChatGPT
-- Claude
-- Google AI Studio
-- Git
-- GitHub
-- Vercel
-
----
-
-# Skills Demonstrated
-
-- Responsive Web Design
-- UI/UX Design
-- AI Integration
-- Prompt Engineering
-- API Integration
-- Resume Analysis
-- Form Validation
-- File Upload
-- Frontend Development
-- Git Version Control
-- Cloud Deployment
-
----
-
-# Screenshots
-
-## Home Page
-
-![Home](screenshots/home.jpeg)
-
-## AI CV Scanner
-
-![AI Scanner](screenshots/scanner.jfif)
-
-## Order Form
-
-![Order Form](screenshots/order.jpeg)
-
----
-
-# Live Demo
-
-https://my-portfolio-ztqu.vercel.app/
-
----
-
-# GitHub Repository
-
-(https://github.com/ztuniio/my-portfolio)
-
----
-
-# How to Run the Project
+**Prerequisites:** Node.js 20+ and a [Gemini API key](https://aistudio.google.com/apikey).
 
 ```bash
-git clone https://github.com/your-username/hiresignal.git
-
+git clone https://github.com/ztuniio/hiresignal.git
 cd hiresignal
-
 npm install
+```
 
+Copy `.env.example` to `.env` and set your key:
+
+```bash
+cp .env.example .env
+```
+
+```env
+GEMINI_API_KEY="your-api-key"
+```
+
+Start the dev server, then open http://localhost:3000:
+
+```bash
 npm run dev
 ```
 
-Or, if using a static website:
+Locally the visitor country is unknown, so the currency follows your computer's time zone.
 
-```bash
-git clone https://github.com/your-username/hiresignal.git
-```
+## Deploy to Vercel
 
-Open `index.html` in your browser.
+1. Import the repository in Vercel. It detects Vite and the functions in `api/` automatically.
+2. In **Project → Settings → Environment Variables**, add `GEMINI_API_KEY`.
+3. Every push to `main` deploys to production.
 
----
+## Editing content
 
-# Future Improvements
+- **Prices:** `pricingTiers` in `src/data.ts` (each tier has a `PKR` and a `USD` amount)
+- **Services, FAQs, testimonials:** `src/data.ts`
+- **WhatsApp number, email, Instagram:** `contact` in `src/data.ts`
 
-- User authentication
-- Resume history
-- PDF report generation
-- AI Cover Letter Generator
-- LinkedIn Profile Analyzer
-- Resume Templates Marketplace
-- Admin Dashboard
-- Payment Gateway Integration
+## Roadmap
 
----
+- User accounts and resume history
+- Downloadable PDF score reports
+- AI cover letter generator
+- LinkedIn profile analyzer
+- Online payments
 
-# Author
+## Author
 
-**Zaid Hussain**
-
-HireSignal – AI-Powered ATS Resume Analysis & Career Services Platform
+**Zaid Hussain** · [GitHub](https://github.com/ztuniio) · [LinkedIn](https://linkedin.com/in/ztuniio)

@@ -1,72 +1,27 @@
 import React from "react";
-import { Award, Globe2, FileCheck } from "lucide-react";
-import { motion } from "motion/react";
+import { Reveal } from "./ui";
+
+const stats = [
+  { value: "500+", label: "CVs delivered across industries" },
+  { value: "6", label: "Career services, from CV to LinkedIn" },
+  { value: "100%", label: "ATS-friendly formatting" },
+  { value: "24–48h", label: "Express delivery available" },
+];
 
 export default function StatsBar() {
-  const stats = [
-    {
-      id: "stat1",
-      number: "500+",
-      label: "CVs Delivered & Approved",
-      subText: "Across multiple industries",
-      icon: Award,
-      color: "text-[#39FF14]",
-      border: "border-[#39FF14]/30"
-    },
-    {
-      id: "stat2",
-      number: "3+",
-      label: "Countries Served Directly",
-      subText: "Pakistan, UAE, Saudi Arabia/Qatar",
-      icon: Globe2,
-      color: "text-[#B57EDC]",
-      border: "border-[#B57EDC]/30"
-    },
-    {
-      id: "stat3",
-      number: "100%",
-      label: "ATS-Optimized Templates",
-      subText: "Bypass applicant screening filters",
-      icon: FileCheck,
-      color: "text-[#39FF14]",
-      border: "border-[#39FF14]/30"
-    }
-  ];
-
   return (
-    <div className="bg-[#0A0A0A] py-10 border-t border-b border-[#1A1A1A]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {stats.map((stat, idx) => {
-            const IconComponent = stat.icon;
-            return (
-              <motion.div
-                key={stat.id}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className={`p-6 rounded-2xl bg-[#111111] border ${stat.border} flex items-start gap-4 hover:shadow-[0_0_15px_rgba(255,255,255,0.02)] transition-all`}
-              >
-                <div className={`p-3 rounded-lg bg-[#1A1A1A] ${stat.color}`}>
-                  <IconComponent className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className={`block font-mono font-bold text-3xl sm:text-4xl ${stat.color}`}>
-                    {stat.number}
-                  </span>
-                  <span className="block font-sans font-semibold text-white text-sm mt-1">
-                    {stat.label}
-                  </span>
-                  <span className="block font-sans text-xs text-gray-500 mt-0.5">
-                    {stat.subText}
-                  </span>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
+    <section aria-label="HireSignal at a glance" className="relative z-10 -mt-12 px-4 sm:px-6 lg:px-8">
+      <Reveal className="mx-auto max-w-6xl rounded-2xl bg-white shadow-xl shadow-slate-900/5 ring-1 ring-slate-200">
+        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-slate-100 lg:grid-cols-4">
+          {stats.map((s) => (
+            <div key={s.label} className="bg-white p-6 sm:p-8">
+              <dt className="sr-only">{s.label}</dt>
+              <dd className="text-3xl font-extrabold tracking-tight text-ink tabular-nums sm:text-4xl">{s.value}</dd>
+              <dd className="mt-1.5 text-sm text-slate-600">{s.label}</dd>
+            </div>
+          ))}
+        </dl>
+      </Reveal>
+    </section>
   );
 }
