@@ -1,6 +1,8 @@
-# HireSignal
+<p align="center"><img src="public/logo-512.png" alt="HireSignal logo" width="120" /></p>
 
-**AI-powered ATS resume analysis and professional CV writing, for job seekers worldwide**
+<h1 align="center">HireSignal</h1>
+
+<p align="center"><strong>AI-powered ATS resume analysis and professional CV writing, for job seekers worldwide</strong></p>
 
 HireSignal helps job seekers build CVs that get past Applicant Tracking Systems (ATS) and land interviews. It pairs a free AI CV scanner, powered by Google Gemini, with professional writing packages, all in one responsive web app.
 
@@ -70,7 +72,7 @@ src/
   components/     Page sections (Hero, Services, Pricing, AICVCheck, OrderForm, ...)
   currency.ts     Currency detection, switching and price formatting
   data.ts         Services, pricing, FAQs, testimonials and contact details
-public/           Favicon
+public/           Logo and browser icons
 ```
 
 ## Run locally

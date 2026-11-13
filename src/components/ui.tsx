@@ -80,12 +80,7 @@ export function SectionHeading({
 export function Logo({ light = false }: { light?: boolean }) {
   return (
     <span className="inline-flex items-center gap-2.5">
-      <svg viewBox="0 0 32 32" className="h-8 w-8" aria-hidden="true">
-        <rect width="32" height="32" rx="8" fill={light ? "#ffffff" : "#0B1220"} />
-        <rect x="7" y="18" width="4" height="7" rx="1.5" fill="#34D399" opacity=".55" />
-        <rect x="14" y="13" width="4" height="12" rx="1.5" fill="#34D399" opacity=".8" />
-        <rect x="21" y="7" width="4" height="18" rx="1.5" fill={light ? "#059669" : "#34D399"} />
-      </svg>
+      <img src="/logo.webp" alt="" width={36} height={36} className="h-9 w-9 shrink-0" decoding="async" />
       <span className={`text-xl font-extrabold tracking-tight ${light ? "text-white" : "text-ink"}`}>
         Hire<span className={light ? "text-brand-bright" : "text-brand"}>Signal</span>
       </span>
