@@ -5,13 +5,13 @@ import { motion, AnimatePresence } from "motion/react";
 import { Reveal, SectionHeading, btnPrimary } from "./ui";
 
 const SAMPLE_CV = `Muhammad Ali
-Pakistan | +92 300 1234567 | ali.dev@email.com | linkedin.com/in/ali-dev
++1 555 010 2030 | ali.dev@email.com | linkedin.com/in/ali-dev
 
 SUMMARY
-Result-driven Software Engineer with 3+ years of experience designing and implementing highly scalable web applications. Expert in Node.js, React, and MongoDB, seeking roles in UAE or Saudi Arabia.
+Result-driven Software Engineer with 3+ years of experience designing and implementing highly scalable web applications. Expert in Node.js, React, and MongoDB, seeking senior full-stack roles.
 
 EXPERIENCE
-Software Engineer | SysTec Pakistan (2024 - Present)
+Software Engineer | SysTec Solutions (2024 - Present)
 • Developed scalable client portals using React and Express.
 • Optimized database queries, reducing payload latency by 30%.
 • Collaborated with product owners to deliver 5 high-impact features ahead of deadlines.
@@ -22,11 +22,11 @@ Associate Developer | NextGen Solutions (2023 - 2024)
 • Solved 50+ critical legacy bugs.
 
 EDUCATION
-BS in Computer Science | FAST-NUCES, Pakistan (Graduated 2023)
+BS in Computer Science (Graduated 2023)
 `;
 
 const SAMPLE_JOB = `Senior Node.js & React Developer
-Location: Dubai, UAE (Hybrid)
+Location: Hybrid
 
 Required Skills:
 - 3+ years experience with React and TypeScript

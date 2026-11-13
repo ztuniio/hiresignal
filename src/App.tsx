@@ -10,9 +10,11 @@ import Testimonials from "./components/Testimonials";
 import OrderForm from "./components/OrderForm";
 import FAQ from "./components/FAQ";
 import Footer from "./components/Footer";
+import { useCurrency } from "./currency";
 
 export default function App() {
   const [selectedServiceId, setSelectedServiceId] = useState("professional");
+  const { currency, setCurrency } = useCurrency();
 
   const handleSelectTier = (tierId: string) => {
     setSelectedServiceId(tierId);
@@ -34,9 +36,9 @@ export default function App() {
         <Services />
         <Process />
         <AICVCheck />
-        <Pricing onSelectTier={handleSelectTier} />
+        <Pricing onSelectTier={handleSelectTier} currency={currency} onCurrencyChange={setCurrency} />
         <Testimonials />
-        <OrderForm selectedServiceId={selectedServiceId} />
+        <OrderForm selectedServiceId={selectedServiceId} currency={currency} />
         <FAQ />
       </main>
       <Footer />

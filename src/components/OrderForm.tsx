@@ -3,31 +3,35 @@ import { ArrowRight, CheckCircle2, Mail, Clock, FileCheck2, MessageCircle, Rotat
 import { motion, AnimatePresence } from "motion/react";
 import { contact, whatsappLink } from "../data";
 import { Reveal, SectionHeading, WhatsAppIcon, btnPrimary } from "./ui";
+import { Currency, formatPrice } from "../currency";
+import { pricingTiers } from "../data";
 
 interface OrderFormProps {
   selectedServiceId: string;
+  currency: Currency;
 }
 
 const serviceOptions = [
   { group: "Packages", items: [
-    { id: "starter", label: "Starter Package (Rs. 1,500)" },
-    { id: "professional", label: "Professional GCC (Rs. 2,500)" },
-    { id: "bundle", label: "Complete Bundle (Rs. 3,500)" },
+    { id: "starter", label: "Starter Package" },
+    { id: "professional", label: "Professional" },
+    { id: "bundle", label: "Complete Bundle" },
   ] },
   { group: "Individual services", items: [
     { id: "ats-cv", label: "ATS-Optimized CV" },
     { id: "designed-cv", label: "Designed / Sidebar CV" },
-    { id: "gulf-cv", label: "Gulf-Market CV" },
+    { id: "country-cv", label: "Country-Specific CV" },
     { id: "cover-letter", label: "Tailored Cover Letter" },
     { id: "linkedin", label: "LinkedIn Optimization" },
     { id: "cv-template", label: "CV Templates" },
   ] },
 ];
 
-const serviceLabel = (id: string) =>
-  serviceOptions.flatMap((g) => g.items).find((i) => i.id === id)?.label ?? id;
-
-const markets = ["Pakistan", "UAE", "Saudi Arabia", "Qatar", "Bahrain", "Other / multiple"];
+const serviceLabel = (id: string, currency: Currency) => {
+  const label = serviceOptions.flatMap((g) => g.items).find((i) => i.id === id)?.label ?? id;
+  const tier = pricingTiers.find((t) => t.id === id);
+  return tier ? `${label} (${formatPrice(tier.price[currency], currency)})` : label;
+};
 
 const nextSteps = [
   { icon: MessageCircle, title: "WhatsApp opens with your order", text: "Your details are filled in. Just press send." },
@@ -39,7 +43,7 @@ const inputClass =
   "w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-[15px] text-ink placeholder:text-slate-400 transition focus:border-brand focus:outline-none focus:ring-4 focus:ring-emerald-100";
 const labelClass = "mb-1.5 block text-sm font-semibold text-ink";
 
-export default function OrderForm({ selectedServiceId }: OrderFormProps) {
+export default function OrderForm({ selectedServiceId, currency }: OrderFormProps) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -58,9 +62,9 @@ export default function OrderForm({ selectedServiceId }: OrderFormProps) {
       `Name: ${fullName.trim()}`,
       `Email: ${email.trim()}`,
       `WhatsApp: ${phone.trim()}`,
-      `Service: ${serviceLabel(service)}`,
+      `Service: ${serviceLabel(service, currency)}`,
       `Target role: ${jobTitle.trim()}`,
-      market ? `Target market: ${market}` : "",
+      market.trim() ? `Target country: ${market.trim()}` : "",
       notes.trim() ? `Notes: ${notes.trim()}` : "",
     ].filter(Boolean);
     return `Hi HireSignal, I'd like to place an order.\n\n${details.join("\n")}`;
@@ -74,7 +78,7 @@ export default function OrderForm({ selectedServiceId }: OrderFormProps) {
   };
 
   const mailtoHref = (body: string) =>
-    `mailto:${contact.email}?subject=${encodeURIComponent(`CV order: ${serviceLabel(service)}`)}&body=${encodeURIComponent(body)}`;
+    `mailto:${contact.email}?subject=${encodeURIComponent(`CV order: ${serviceLabel(service, currency)}`)}&body=${encodeURIComponent(body)}`;
 
   return (
     <section id="order-form" className="border-y border-slate-200 bg-white py-24 md:py-32">
@@ -82,7 +86,7 @@ export default function OrderForm({ selectedServiceId }: OrderFormProps) {
         <SectionHeading
           eyebrow="Order"
           title="Start your order"
-          description="Tell us what you need. Your order is sent to our team on WhatsApp so you can talk directly with your writer."
+          description="Tell us what you need. Your order is sent to our team on WhatsApp, where we confirm the details with you."
         />
 
         <div className="grid gap-8 lg:grid-cols-12 lg:gap-12">
@@ -118,7 +122,7 @@ export default function OrderForm({ selectedServiceId }: OrderFormProps) {
                       {serviceOptions.map((g) => (
                         <optgroup key={g.group} label={g.group}>
                           {g.items.map((i) => (
-                            <option key={i.id} value={i.id}>{i.label}</option>
+                            <option key={i.id} value={i.id}>{serviceLabel(i.id, currency)}</option>
                           ))}
                         </optgroup>
                       ))}
@@ -131,14 +135,10 @@ export default function OrderForm({ selectedServiceId }: OrderFormProps) {
                   </div>
                   <div>
                     <label htmlFor="o-market" className={labelClass}>
-                      Target market <span className="font-normal text-slate-500">(optional)</span>
+                      Target country <span className="font-normal text-slate-500">(optional)</span>
                     </label>
-                    <select id="o-market" value={market} onChange={(e) => setMarket(e.target.value)} className={inputClass}>
-                      <option value="">Select a country</option>
-                      {markets.map((m) => (
-                        <option key={m} value={m}>{m}</option>
-                      ))}
-                    </select>
+                    <input id="o-market" type="text" value={market} autoComplete="off"
+                      onChange={(e) => setMarket(e.target.value)} placeholder="Where are you applying?" className={inputClass} />
                   </div>
                   <div className="sm:col-span-2">
                     <label htmlFor="o-notes" className={labelClass}>

@@ -26,9 +26,9 @@ export const servicesData: ServiceItem[] = [
     tag: "Creative"
   },
   {
-    id: "gulf-cv",
-    title: "Gulf-Market CV",
-    description: "Tailored for the UAE, Saudi Arabia, Qatar and Bahrain, with the personal details, format and phrasing GCC recruiters expect.",
+    id: "country-cv",
+    title: "Country-Specific CV",
+    description: "Tailored to the country you are applying in, with the personal details, format and phrasing local recruiters expect.",
     icon: "Globe",
     tag: "High-Demand"
   },
@@ -57,7 +57,7 @@ export const pricingTiers: PricingTier[] = [
   {
     id: "starter",
     name: "Starter Package",
-    price: "Rs. 1,500",
+    price: { PKR: 1500, USD: 19 },
     description: "Perfect for entry-level professionals seeking a rapid ATS-compatible boost.",
     features: [
       "1 ATS-Optimized Professional CV",
@@ -70,14 +70,14 @@ export const pricingTiers: PricingTier[] = [
   },
   {
     id: "professional",
-    name: "Professional GCC",
-    price: "Rs. 2,500",
-    description: "Our best seller. Custom-tailored for experienced pros and candidates targeting the Gulf/GCC.",
+    name: "Professional",
+    price: { PKR: 2500, USD: 29 },
+    description: "Our best seller. Tailored for experienced professionals and candidates applying abroad.",
     features: [
-      "1 ATS-Optimized & GCC-Localized CV",
+      "1 ATS-Optimized CV, Localized to Your Target Country",
       "Targeted Companion Cover Letter",
       "Industry-Specific Keyword Research",
-      "GCC Recruiter Alignment (UAE/KSA/Qatar)",
+      "Recruiter Alignment for Your Target Market",
       "3 Rounds of Revisions Included",
       "Priority 2-Day Delivery"
     ],
@@ -86,13 +86,13 @@ export const pricingTiers: PricingTier[] = [
   {
     id: "bundle",
     name: "Complete Bundle",
-    price: "Rs. 3,500",
+    price: { PKR: 3500, USD: 49 },
     description: "The complete career transformation. Includes personal expert consulting and social branding.",
     features: [
-      "Everything in Professional GCC Package",
+      "Everything in the Professional Package",
       "Full LinkedIn Profile Optimization Sheet",
       "1-on-1 WhatsApp Support with Lead Writer",
-      "Cold-Email Pitch Guide for Gulf Recruiters",
+      "Cold-Email Pitch Guide for Recruiters",
       "Unlimited Lifetime Revisions",
       "24-48 Hours Express Delivery"
     ],
@@ -105,21 +105,18 @@ export const testimonialsData: TestimonialItem[] = [
     id: "t1",
     name: "Muhammad Fahad",
     role: "Senior Full Stack Engineer",
-    location: "Pakistan ➔ Dubai, UAE",
     quote: "The Gulf-Market CV package was an absolute game changer. Within 2 weeks of updating my resume and LinkedIn profile, I was contacted by a top-tier tech firm in Dubai. My ATS score went from 45% to 85%!"
   },
   {
     id: "t2",
     name: "Ayesha Khan",
     role: "Lead Marketing Manager",
-    location: "Lahore ➔ Riyadh, Saudi Arabia",
     quote: "HireSignal understood exactly what recruiters in Saudi Arabia are looking for. The Cover Letter was tailored perfectly, and the in-depth keyword density helped me secure 4 direct interview calls in Riyadh."
   },
   {
     id: "t3",
     name: "Tariq Al-Mansoor",
     role: "Operations Director",
-    location: "Islamabad ➔ Doha, Qatar",
     quote: "The bundle service is worth triple the price. The unlimited revisions and personalized consultation on WhatsApp made me feel completely valued. Absolute professional craftsmanship!"
   }
 ];
@@ -151,7 +148,7 @@ export const faqs = [
   },
   {
     q: "How long does delivery take?",
-    a: "The Starter Package is delivered in 3 days, Professional GCC in 2 days, and the Complete Bundle in 24 to 48 hours.",
+    a: "The Starter Package is delivered in 3 days, Professional in 2 days, and the Complete Bundle in 24 to 48 hours.",
   },
   {
     q: "Which file formats will I receive?",
@@ -159,11 +156,15 @@ export const faqs = [
   },
   {
     q: "How many revisions are included?",
-    a: "Starter includes 1 round of revisions, Professional GCC includes 3, and the Complete Bundle includes unlimited revisions.",
+    a: "Starter includes 1 round of revisions, Professional includes 3, and the Complete Bundle includes unlimited revisions.",
   },
   {
-    q: "Do you write CVs for jobs in the Gulf?",
-    a: "Yes. Our Gulf-Market CV and Professional GCC package are built for recruiters in the UAE, Saudi Arabia, Qatar and Bahrain, including the details and format they expect.",
+    q: "Can you tailor my CV for a specific country?",
+    a: "Yes. Our Country-Specific CV and Professional package adapt the format, personal details and phrasing to what recruiters in your target country expect.",
+  },
+  {
+    q: "Which currency are your prices in?",
+    a: "Prices are shown in your local currency where we support it, and in US dollars everywhere else. You can switch currency above the pricing table.",
   },
   {
     q: "Is the AI CV score check really free?",

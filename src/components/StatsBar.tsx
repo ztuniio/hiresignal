@@ -3,12 +3,10 @@ import { Reveal } from "./ui";
 
 const stats = [
   { value: "500+", label: "CVs delivered across industries" },
-  { value: "4", label: "Markets: Pakistan, UAE, KSA & Qatar" },
+  { value: "6", label: "Career services, from CV to LinkedIn" },
   { value: "100%", label: "ATS-friendly formatting" },
   { value: "24–48h", label: "Express delivery available" },
 ];
-
-const markets = ["Pakistan", "United Arab Emirates", "Saudi Arabia", "Qatar", "Bahrain"];
 
 export default function StatsBar() {
   return (
@@ -24,17 +22,6 @@ export default function StatsBar() {
           ))}
         </dl>
       </Reveal>
-
-      <div className="mx-auto mt-12 flex max-w-5xl flex-wrap items-center justify-center gap-x-8 gap-y-3 text-center">
-        <span className="w-full text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 sm:w-auto">
-          Written for recruiters in
-        </span>
-        {markets.map((m) => (
-          <span key={m} className="text-base font-bold text-slate-400">
-            {m}
-          </span>
-        ))}
-      </div>
     </section>
   );
 }

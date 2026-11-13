@@ -16,8 +16,8 @@ export default function Testimonials() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="Client stories"
-          title="Professionals who made the move"
-          description="Job seekers from Pakistan who landed interviews in Dubai, Riyadh and Doha."
+          title="What our clients say"
+          description="Professionals who landed interviews with a HireSignal CV."
         />
 
         <div className="grid gap-6 md:grid-cols-3">
@@ -41,7 +41,6 @@ export default function Testimonials() {
                 <div>
                   <p className="font-semibold text-ink">{t.name}</p>
                   <p className="text-sm text-slate-500">{t.role}</p>
-                  <p className="text-xs font-medium text-brand">{t.location.replace("➔", "→")}</p>
                 </div>
               </figcaption>
             </Reveal>

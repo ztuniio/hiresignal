@@ -52,7 +52,7 @@ function ReportMockup() {
             </span>
             <div>
               <p className="text-sm font-bold text-ink">Ali_Software_Engineer.pdf</p>
-              <p className="text-xs text-slate-500">Target: Senior Developer, Dubai</p>
+              <p className="text-xs text-slate-500">Target: Senior Developer</p>
             </div>
           </div>
           <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-brand-dark">After rewrite</span>
@@ -103,7 +103,7 @@ function ReportMockup() {
         </span>
         <div>
           <p className="text-sm font-bold text-ink">Interview invitation</p>
-          <p className="text-xs text-slate-500">Recruiter, Dubai · just now</p>
+          <p className="text-xs text-slate-500">From a recruiter · just now</p>
         </div>
       </div>
     </div>
@@ -127,7 +127,7 @@ export default function Hero() {
         <div>
           <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs font-semibold text-emerald-300">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            CV writing for Pakistan, UAE, Saudi Arabia &amp; Qatar
+            Professional CV writing for job seekers worldwide
           </p>
 
           <h1 className="mt-6 text-4xl font-extrabold leading-[1.08] tracking-tight text-white text-balance sm:text-5xl lg:text-6xl">
@@ -137,7 +137,7 @@ export default function Hero() {
 
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300 text-pretty">
             Most CVs are rejected by software before a recruiter ever reads them. HireSignal rewrites yours around the
-            format and keywords employers in Pakistan and the Gulf screen for.
+            format and keywords employers screen for.
           </p>
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">

@@ -2,12 +2,15 @@ import React from "react";
 import { Check, ArrowRight } from "lucide-react";
 import { pricingTiers } from "../data";
 import { Reveal, SectionHeading } from "./ui";
+import { Currency, currencies, formatPrice } from "../currency";
 
 interface PricingProps {
   onSelectTier: (tierId: string) => void;
+  currency: Currency;
+  onCurrencyChange: (currency: Currency) => void;
 }
 
-export default function Pricing({ onSelectTier }: PricingProps) {
+export default function Pricing({ onSelectTier, currency, onCurrencyChange }: PricingProps) {
   return (
     <section id="pricing" className="py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -16,6 +19,28 @@ export default function Pricing({ onSelectTier }: PricingProps) {
           title="Simple, one-time pricing"
           description="Pay once per package. No subscriptions and no hidden fees."
         />
+
+        <div className="-mt-4 mb-12 flex justify-center md:-mt-6">
+          <div role="radiogroup" aria-label="Currency" className="inline-flex rounded-xl bg-slate-200/70 p-1">
+            {currencies.map((c) => {
+              const active = c.code === currency;
+              return (
+                <button
+                  key={c.code}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => onCurrencyChange(c.code)}
+                  className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                    active ? "bg-white text-ink shadow-sm" : "text-slate-600 hover:text-ink"
+                  }`}
+                >
+                  {c.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         <div className="mx-auto grid max-w-md gap-6 lg:max-w-none lg:grid-cols-3 lg:items-stretch">
           {pricingTiers.map((tier, idx) => {
@@ -41,7 +66,7 @@ export default function Pricing({ onSelectTier }: PricingProps) {
                 </p>
                 <p className="mt-6 flex items-baseline gap-2">
                   <span className={`text-4xl font-extrabold tracking-tight tabular-nums ${popular ? "text-white" : "text-ink"}`}>
-                    {tier.price}
+                    {formatPrice(tier.price[currency], currency)}
                   </span>
                   <span className={`text-sm ${popular ? "text-slate-400" : "text-slate-500"}`}>one-time</span>
                 </p>

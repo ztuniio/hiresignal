@@ -44,7 +44,7 @@ export default function Footer() {
         <div>
           <Logo light />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-400">
-            ATS-optimized CVs, cover letters and LinkedIn profiles for professionals in Pakistan and the Gulf.
+            ATS-optimized CVs, cover letters and LinkedIn profiles for professionals worldwide.
           </p>
         </div>
 

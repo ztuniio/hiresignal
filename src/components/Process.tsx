@@ -9,7 +9,7 @@ export default function Process() {
         <SectionHeading
           eyebrow="How it works"
           title="Interview-ready in four steps"
-          description="A simple process run over WhatsApp, so you always know who is working on your CV and when it will arrive."
+          description="A simple process run over WhatsApp, so you can follow your order from start to finish."
         />
 
         <ol className="relative grid gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
